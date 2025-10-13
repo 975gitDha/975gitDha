@@ -1,0 +1,395 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Flutter Desktop POS Automation — Frameworks & Architecture</title>
+  <link rel="stylesheet" href="https://unpkg.com/reveal.js/dist/reveal.css" />
+  <link rel="stylesheet" href="https://unpkg.com/reveal.js/dist/theme/white.css" id="theme" />
+  <style>
+    :root {
+      --blue: #2563eb; /* Flutter-native */
+      --green: #059669; /* Robot/Python driver */
+      --orange: #d97706; /* AI/Visual */
+      --slate: #0f172a;
+      --muted: #6b7280;
+      --border: #e5e7eb;
+      --bg: #ffffff;
+      --bg-soft: #f9fafb;
+    }
+    .reveal section { font-size: 28px; }
+    h1, h2, h3 { color: var(--slate); }
+
+    /* Table styling */
+    .table-wrapper { width: 100%; }
+    table.compare { width: 100%; border-collapse: collapse; font-size: 22px; }
+    table.compare th, table.compare td { border: 1px solid var(--border); padding: 10px 12px; vertical-align: top; }
+    table.compare th { background: var(--bg-soft); font-weight: 700; text-align: left; }
+    table.compare ul { margin: 0; padding-left: 1.2em; }
+    table.compare td:nth-child(1) { font-weight: 700; white-space: nowrap; }
+    table.compare td:nth-child(2) { white-space: nowrap; }
+    .muted { color: var(--muted); font-weight: 500; }
+
+    /* Badges for AI/Visual annotation */
+    .badge { display: inline-block; padding: 4px 10px; border-radius: 999px; font-size: 18px; border: 1px solid transparent; }
+    .badge-ai { background: #fff4e6; color: #9a5b13; border-color: #ffd8a8; }
+    .badge-opt { background: #e7f5ff; color: #0b69a3; border-color: #a5d8ff; }
+    .badge-no { background: #f1f5f9; color: #475569; border-color: #e2e8f0; }
+
+    /* Legend */
+    .legend { display: flex; gap: 16px; align-items: center; flex-wrap: wrap; font-size: 20px; }
+    .legend .item { display: inline-flex; align-items: center; gap: 8px; }
+    .swatch { width: 14px; height: 14px; border-radius: 3px; display: inline-block; }
+    .swatch.blue { background: var(--blue); }
+    .swatch.green { background: var(--green); }
+    .swatch.orange { background: var(--orange); }
+
+    /* Architecture layers */
+    .stack { display: flex; flex-direction: column; gap: 14px; }
+    .layer { border: 2px solid var(--border); border-left-width: 10px; border-radius: 10px; padding: 14px 16px; background: var(--bg); }
+    .layer.blue { border-left-color: var(--blue); }
+    .layer.green { border-left-color: var(--green); }
+    .layer.orange { border-left-color: var(--orange); }
+
+    /* Path steps */
+    .steps { display: flex; flex-direction: column; gap: 10px; }
+    .step { border: 1px solid var(--border); border-left-width: 8px; border-radius: 8px; padding: 10px 12px; background: var(--bg); font-size: 22px; }
+    .step.blue { border-left-color: var(--blue); }
+    .step.green { border-left-color: var(--green); }
+    .step.orange { border-left-color: var(--orange); }
+
+    /* Bullets */
+    .tight ul { margin: 0.25em 0 0 1.1em; }
+    .tight li { margin: 0.15em 0; }
+
+    /* Fit text helpers */
+    .r-fit-24 { font-size: 24px; }
+  </style>
+</head>
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+      <!-- Title -->
+      <section data-auto-animate>
+        <h1 class="r-fit-text">Flutter Desktop POS Automation</h1>
+        <h3>Framework Comparison & Hybrid Architecture</h3>
+        <p class="muted">Senior-friendly summary — pros, cons, and AI integration</p>
+        <div class="legend" style="margin-top:16px;">
+          <div class="item"><span class="swatch blue"></span> Flutter-native</div>
+          <div class="item"><span class="swatch green"></span> Robot/Python driver & orchestration</div>
+          <div class="item"><span class="swatch orange"></span> AI / Visual validation</div>
+        </div>
+      </section>
+
+      <!-- Pros & Cons Table with AI annotation -->
+      <section>
+        <h2>Frameworks — Pros, Cons, Architecture</h2>
+        <div class="table-wrapper">
+          <table class="compare">
+            <thead>
+              <tr>
+                <th>Framework / Tool</th>
+                <th>Language</th>
+                <th>Core Type / Architecture</th>
+                <th>Pros</th>
+                <th>Cons</th>
+                <th>Best Use Case</th>
+                <th>AI / Visual</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Flutter Integration Test</td>
+                <td>Dart</td>
+                <td>Runs inside Flutter app using <span class="muted">integration_test</span> / <span class="muted">WidgetTester</span></td>
+                <td>
+                  <ul>
+                    <li>Native Flutter support</li>
+                    <li>Fast execution</li>
+                    <li>Ideal for widget-level functional testing</li>
+                    <li>Easy CI/CD integration</li>
+                  </ul>
+                </td>
+                <td>
+                  <ul>
+                    <li>Only Flutter widgets (no OS dialogs/printers)</li>
+                    <li>No AI/visual validation</li>
+                  </ul>
+                </td>
+                <td>Core functional flows (login, add items, navigation)</td>
+                <td><span class="badge badge-no">Not AI-enabled</span></td>
+              </tr>
+              <tr>
+                <td>Patrol</td>
+                <td>Dart</td>
+                <td>Flutter + native bridge; runs via <span class="muted">patrol_cli</span> → Flutter Engine</td>
+                <td>
+                  <ul>
+                    <li>Bridges Flutter + native dialogs</li>
+                    <li>Deep E2E testing</li>
+                    <li>Dart syntax within Flutter ecosystem</li>
+                  </ul>
+                </td>
+                <td>
+                  <ul>
+                    <li>Desktop support experimental</li>
+                    <li>Limited AI/visual integration</li>
+                    <li>Smaller community</li>
+                  </ul>
+                </td>
+                <td>Deep Flutter-native integration (macOS, mobile POS)</td>
+                <td><span class="badge badge-no">Not AI-enabled</span></td>
+              </tr>
+              <tr>
+                <td>Appium Flutter Integration Driver</td>
+                <td>Python</td>
+                <td>Python → Appium Client → Appium Server → Flutter Driver Extension</td>
+                <td>
+                  <ul>
+                    <li>Deep Flutter widget control</li>
+                    <li>Cross-language flexibility</li>
+                    <li>Hybrid UI automation possible</li>
+                    <li>CI/CD friendly</li>
+                  </ul>
+                </td>
+                <td>
+                  <ul>
+                    <li>Requires driver extension in app</li>
+                    <li>Desktop support partial/experimental</li>
+                    <li>Python code only (less friendly to non-devs)</li>
+                  </ul>
+                </td>
+                <td>Functional E2E tests on mobile/desktop POC</td>
+                <td><span class="badge badge-opt">Optional AI integration</span></td>
+              </tr>
+              <tr>
+                <td>Robot Framework + Appium Flutter Driver</td>
+                <td>Python + Robot DSL</td>
+                <td>Robot keywords → Python Appium client → Appium Server → Flutter Driver Extension</td>
+                <td>
+                  <ul>
+                    <li>Human-readable keywords</li>
+                    <li>Reusable modular test libraries</li>
+                    <li>Integrates with AI/visual tools</li>
+                    <li>Central orchestration layer</li>
+                  </ul>
+                </td>
+                <td>
+                  <ul>
+                    <li>Slower than raw Python</li>
+                    <li>Multi-layer debugging</li>
+                  </ul>
+                </td>
+                <td>Full regression, hybrid orchestration, POS workflows</td>
+                <td><span class="badge badge-ai">AI/Visual capable</span></td>
+              </tr>
+              <tr>
+                <td>SikuliX</td>
+                <td>Java / Python</td>
+                <td>Image-based computer vision pattern matching</td>
+                <td>
+                  <ul>
+                    <li>Works on any GUI</li>
+                    <li>Excellent for popups/screen-based validation</li>
+                    <li>Detects visual anomalies</li>
+                  </ul>
+                </td>
+                <td>
+                  <ul>
+                    <li>Slower due to image processing</li>
+                    <li>Sensitive to resolution/scaling</li>
+                    <li>Logic testing only</li>
+                  </ul>
+                </td>
+                <td>Visual validation, popups, non-Flutter dialogs</td>
+                <td><span class="badge badge-ai">AI/Visual layer</span></td>
+              </tr>
+              <tr>
+                <td>Applitools Eyes OSS</td>
+                <td>Plugin</td>
+                <td>AI visual comparison (screenshot diffs)</td>
+                <td>
+                  <ul>
+                    <li>Detects visual regressions</li>
+                    <li>AI-powered layout comparison</li>
+                    <li>Cross-platform</li>
+                  </ul>
+                </td>
+                <td>
+                  <ul>
+                    <li>Limited free tier</li>
+                    <li>Does not test logic</li>
+                  </ul>
+                </td>
+                <td>UI regression, color/layout consistency</td>
+                <td><span class="badge badge-ai">AI/Visual layer</span></td>
+              </tr>
+              <tr>
+                <td>Testim Open Source</td>
+                <td>JavaScript</td>
+                <td>Selenium / Appium</td>
+                <td>
+                  <ul>
+                    <li>AI locator healing</li>
+                    <li>Visual recognition</li>
+                    <li>End-to-end flows</li>
+                  </ul>
+                </td>
+                <td>
+                  <ul>
+                    <li>Requires Appium bridge</li>
+                    <li>JS ecosystem</li>
+                  </ul>
+                </td>
+                <td>Smart locators, automated functional/visual flows</td>
+                <td><span class="badge badge-ai">AI/Visual layer</span></td>
+              </tr>
+              <tr>
+                <td>OpenTest</td>
+                <td>YAML / JS</td>
+                <td>Cross-platform automation</td>
+                <td>
+                  <ul>
+                    <li>Fuzzy matching, self-healing</li>
+                    <li>Supports Appium/WinAppDriver</li>
+                  </ul>
+                </td>
+                <td>
+                  <ul>
+                    <li>Requires setup</li>
+                    <li>Slower for large suites</li>
+                  </ul>
+                </td>
+                <td>Cross-platform desktop automation</td>
+                <td><span class="badge badge-ai">AI/Visual layer</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="muted r-fit-24">AI legend: <span class="badge badge-ai">AI/Visual capable</span> · <span class="badge badge-opt">Optional AI</span> · <span class="badge badge-no">No AI</span></p>
+      </section>
+
+      <!-- Hybrid Architecture Diagram -->
+      <section>
+        <h2>High-Level Hybrid Architecture</h2>
+        <div class="stack">
+          <div class="layer green"><strong>Test Orchestration Layer</strong><br/><span class="muted">Robot Framework / Python Scripts / Keyword DSL</span></div>
+          <div class="layer blue"><strong>Flutter Test Layer</strong><br/><span class="muted">Integration Test (Dart) · Patrol (Dart) · Appium Flutter Integration Driver (Python)</span></div>
+          <div class="layer green"><strong>Appium / Driver Layer</strong><br/><span class="muted">Appium Server · Flutter Driver Extension</span></div>
+          <div class="layer"><strong>System / Desktop / UI Layer</strong><br/><span class="muted">Flutter Engine (Desktop POS) · Native OS popups · Printer/Payment events</span></div>
+          <div class="layer orange"><strong>AI / Visual Validation Layer</strong><br/><span class="muted">SikuliX · Applitools Eyes · Testim · OpenTest</span></div>
+        </div>
+      </section>
+
+      <!-- Distinct Architecture Paths -->
+      <section>
+        <h2>Path 1 — Flutter Integration Test (Dart)</h2>
+        <div class="steps">
+          <div class="step blue">Flutter App</div>
+          <div class="step blue">Integration Test / WidgetTester</div>
+          <div class="step">CI/CD Pipeline</div>
+        </div>
+        <div class="tight">
+          <ul>
+            <li>Fastest, pure logic validation</li>
+            <li>AI/Visual: <span class="badge badge-no">Not supported</span></li>
+          </ul>
+        </div>
+      </section>
+
+      <section>
+        <h2>Path 2 — Patrol (Dart)</h2>
+        <div class="steps">
+          <div class="step blue">Flutter App</div>
+          <div class="step blue">Patrol CLI (Dart)</div>
+          <div class="step blue">Flutter Engine + Native Layer</div>
+          <div class="step">CI/CD Pipeline</div>
+        </div>
+        <div class="tight">
+          <ul>
+            <li>Bridges Flutter + native dialogs</li>
+            <li>AI/Visual: <span class="badge badge-no">Not supported natively</span></li>
+          </ul>
+        </div>
+      </section>
+
+      <section>
+        <h2>Path 3 — Appium Flutter Integration Driver (Python)</h2>
+        <div class="steps">
+          <div class="step green">Python Test Script</div>
+          <div class="step green">Appium Flutter Integration Driver</div>
+          <div class="step green">Appium Server</div>
+          <div class="step green">Flutter Driver Extension</div>
+          <div class="step blue">Flutter Engine (POS App)</div>
+          <div class="step orange">Optional AI/Visual Layer (SikuliX / Applitools / Testim)</div>
+        </div>
+        <div class="tight">
+          <ul>
+            <li>External AI layer for popups and visual regression</li>
+          </ul>
+        </div>
+      </section>
+
+      <section>
+        <h2>Path 4 — Robot Framework + Appium Flutter Driver</h2>
+        <div class="steps">
+          <div class="step green">.robot Test Case (Keywords)</div>
+          <div class="step green">Robot Framework Engine</div>
+          <div class="step green">Appium Flutter Integration Driver (Python)</div>
+          <div class="step green">Appium Server</div>
+          <div class="step green">Flutter Driver Extension</div>
+          <div class="step blue">Flutter Engine (POS App)</div>
+          <div class="step orange">AI / Visual Validation Layer (SikuliX / Applitools / Testim / OpenTest)</div>
+        </div>
+        <div class="tight">
+          <ul>
+            <li>Central orchestration of logic, system events, and visual validation</li>
+          </ul>
+        </div>
+      </section>
+
+      <section>
+        <h2>Path 5 — AI / Visual Frameworks</h2>
+        <div class="steps">
+          <div class="step blue">POS App GUI</div>
+          <div class="step orange">AI / Visual Framework</div>
+          <div class="step orange">Comparison & Validation</div>
+          <div class="step">Reports / CI/CD</div>
+        </div>
+        <div class="tight">
+          <ul>
+            <li>Integrate with Robot Framework or Appium for visual checks</li>
+            <li>Handles desktop popups, layout anomalies, image-based validation</li>
+            <li>Self-healing locators (Testim/OpenTest)</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- Senior Takeaways -->
+      <section>
+        <h2>Key Senior Takeaways</h2>
+        <ul>
+          <li><strong>Hybrid approach is required</strong>: Flutter-native + system-level automation + AI/visual checks</li>
+          <li><strong>Dart-native</strong>: fastest for logic; <strong>Robot/Python + Appium</strong>: full E2E and cross-platform</li>
+          <li><strong>AI frameworks</strong> require separate path and can be reused across flows</li>
+        </ul>
+      </section>
+
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/reveal.js/dist/reveal.js"></script>
+  <script src="https://unpkg.com/reveal.js/plugin/notes/notes.js"></script>
+  <script>
+    Reveal.initialize({
+      hash: true,
+      slideNumber: true,
+      transition: 'fade',
+      width: 1280,
+      height: 720,
+      plugins: [ RevealNotes ]
+    });
+  </script>
+</body>
+</html>
